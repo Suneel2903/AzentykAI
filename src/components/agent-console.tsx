@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { AGENT_WORKFLOWS, type WorkflowStep, type GovernanceItem } from "@/content/agent-workflows";
-import { cn } from "@/lib/cn";
+import { cn } from "@/lib/utils";
 import {
     LayoutDashboard,
     Calendar,
@@ -61,6 +61,7 @@ export default function AgentConsole() {
                         return (
                             <button
                                 key={workflow.id}
+                                suppressHydrationWarning
                                 onClick={() => setActiveWorkflowId(workflow.id)}
                                 className={cn(
                                     "w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-all text-left group",
@@ -131,6 +132,7 @@ export default function AgentConsole() {
                         isGovOpen ? "h-64 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]" : "h-12 hover:bg-panel-800"
                     )}>
                         <button
+                            suppressHydrationWarning
                             onClick={() => setIsGovOpen(!isGovOpen)}
                             className="w-full h-12 px-6 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-muted hover:text-white transition-colors"
                         >
@@ -183,6 +185,7 @@ export default function AgentConsole() {
                     </div>
                     <div className="flex gap-2">
                         <button
+                            suppressHydrationWarning
                             onClick={handlePrev}
                             disabled={activeStepIndex === 0}
                             className="p-2 rounded-lg hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-white"
@@ -190,6 +193,7 @@ export default function AgentConsole() {
                             <ChevronLeft className="w-5 h-5" />
                         </button>
                         <button
+                            suppressHydrationWarning
                             onClick={handleNext}
                             disabled={activeStepIndex === activeWorkflow.steps.length - 1}
                             className="p-2 rounded-lg bg-white text-black hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"

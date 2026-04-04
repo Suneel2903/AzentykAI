@@ -1,98 +1,134 @@
-"use client";
+import { Metadata } from "next"
+import { USE_CASES } from "@/content/use-cases"
+import { Badge } from "@/components/ui/Badge"
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter"
+import { VideoPlaceholder } from "@/components/ui/VideoPlaceholder"
+import { AnalyticsAccordion } from "@/components/ui/AnalyticsAccordion"
+import { Button } from "@/components/ui/Button"
+import { MoreWorkflows } from "@/components/sections/MoreWorkflows"
+import Link from "next/link"
 
-import * as React from "react";
-import SiteNav from "@/components/site-nav";
-import SiteFooter from "@/components/site-footer";
-import Link from "next/link";
-import { AGENT_WORKFLOWS } from "@/content/agent-workflows";
-import { ArrowRight, CheckCircle2, ScanEye } from "lucide-react";
-import AgentConsole from "@/components/agent-console";
+export const metadata: Metadata = {
+  title: 'Healthcare AI Use Cases — RCM, Prior Auth, Scheduling, Billing',
+  description: 'See how Azentyk AI agents automate the 4 highest-value workflows in US healthcare revenue cycle management.'
+}
 
 export default function SolutionsPage() {
-    return (
-        <div className="flex flex-col min-h-screen">
-            <SiteNav />
-            <main className="flex-1 pt-32 px-6 pb-20">
-                <div className="max-w-4xl mx-auto text-center mb-20">
-                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">Autonomous Agents</h1>
-                    <p className="text-xl text-text-secondary leading-relaxed">
-                        Azenty K AI deploys specialized voice and cognitive agents that plug independently into your revenue cycle.
-                    </p>
-                </div>
+  return (
+    <div className="bg-bg-primary min-h-screen">
+      
+      {/* Page Hero */}
+      <section className="relative pt-32 pb-24 overflow-hidden border-b border-border-subtle">
+         {/* Animated Scan Line */}
+         <div className="absolute inset-0 z-0 pointer-events-none">
+            <div className="w-full h-[1px] bg-accent-primary/20 absolute top-0 animate-[fade-in-up_4s_linear_infinite]" />
+         </div>
 
-                {/* Agent Deep Dives */}
-                <div className="max-w-6xl mx-auto space-y-32">
-                    {AGENT_WORKFLOWS.map((agent, i) => (
-                        <div key={agent.id} id={agent.id} className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                            <div className={i % 2 === 1 ? "md:order-2" : ""}>
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-white/5 border border-white/10 text-xs font-mono text-accent-cyan mb-4">
-                                    {agent.roleTitle}
-                                </div>
-                                <h2 className="text-3xl font-bold text-white mb-4">{agent.name}</h2>
-                                <p className="text-lg text-text-secondary mb-6">{agent.tagline}</p>
+         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center max-w-4xl pt-12">
+            <h1 className="text-h1 text-text-primary mb-6">
+              Every call your team makes manually is a workflow Azentyk can own.
+            </h1>
+            <p className="text-body-lg text-text-secondary">
+              Five core use cases — plus six more. Each one deployed in 48 hours. All of them generating measurable ROI in week one.
+            </p>
+         </div>
+      </section>
 
-                                <div className="space-y-4 mb-8">
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                        <div className="text-xs text-text-muted uppercase tracking-wider mb-2 font-semibold">Trigger</div>
-                                        <div className="flex items-start gap-3">
-                                            <ScanEye className="w-5 h-5 text-accent-cyan mt-0.5 shrink-0" />
-                                            <p className="text-sm text-white">{agent.trigger}</p>
-                                        </div>
-                                    </div>
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                        <div className="text-xs text-text-muted uppercase tracking-wider mb-2 font-semibold">Ideal Outcome</div>
-                                        <div className="flex items-start gap-3">
-                                            <CheckCircle2 className="w-5 h-5 text-accent-mint mt-0.5 shrink-0" />
-                                            <p className="text-sm text-white">{agent.outcome}</p>
-                                        </div>
-                                    </div>
-                                </div>
+      {/* Use Case Deep Dives */}
+      {USE_CASES.map((useCase, index) => {
+        const isEven = index % 2 === 0
+        
+        return (
+          <section key={useCase.id} className="relative py-32 border-b border-border-subtle overflow-hidden">
+            
+            {/* Giant Number Background */}
+            <div className="absolute top-10 right-10 text-[180px] font-display font-bold text-text-primary opacity-[0.04] leading-none pointer-events-none">
+              {useCase.number}
+            </div>
 
-                                <Link href="/contact" className="inline-flex items-center gap-2 text-white font-semibold hover:text-accent-cyan transition-colors">
-                                    Deploy {agent.name} <ArrowRight className="w-4 h-4" />
-                                </Link>
-                            </div>
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              <div className={`grid grid-cols-1 lg:grid-cols-2 gap-16 items-center ${isEven ? '' : 'lg:grid-flow-col-dense'}`}>
+                
+                {/* Text Content */}
+                <div className={`flex flex-col gap-8 ${isEven ? 'lg:col-start-1' : 'lg:col-start-2'}`}>
+                  
+                  <div>
+                    <Badge variant="cyan" className="font-mono mb-6">{useCase.badge}</Badge>
+                    <h2 className="text-h2 text-text-primary">{useCase.name}</h2>
+                  </div>
 
-                            {/* Mini Workflow Visualization */}
-                            <div className={i % 2 === 1 ? "md:order-1" : ""}>
-                                <div className="rounded-2xl border border-white/10 bg-bg-900 p-6 shadow-soft relative overflow-hidden group hover:border-accent-cyan/30 transition-colors">
-                                    <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-20 mix-blend-overlay" />
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-accent-cyan/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-accent-cyan/20 transition-colors" />
-                                    <div className="absolute inset-0 bg-gradient-to-br from-accent-cyan/5 to-transparent opacity-50" />
-                                    <h4 className="font-semibold text-white mb-4 relative z-10 flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse" />
-                                        Workflow Logic
-                                    </h4>
-                                    <div className="space-y-3 relative z-10">
-                                        {agent.steps.slice(0, 5).map((step, idx) => (
-                                            <div key={idx} className="flex gap-4">
-                                                <div className="flex flex-col items-center">
-                                                    <div className="w-2 h-2 rounded-full bg-accent-cyan" />
-                                                    <div className="w-[1px] h-full bg-white/10 my-1 font-mono" />
-                                                </div>
-                                                <div className="pb-4">
-                                                    <div className="text-xs text-accent-violet font-mono mb-0.5 uppercase">{step.phase}</div>
-                                                    <div className="text-sm text-white font-medium">{step.title}</div>
-                                                    <div className="text-xs text-text-muted line-clamp-1">{step.detail}</div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
+                  {/* Problem Block */}
+                  <div className="card-dark border-accent-danger/20 bg-accent-danger/5 p-6 relative overflow-hidden group">
+                     <div className="absolute top-0 left-0 w-1 h-full bg-accent-danger/60" />
+                     <p className="text-body text-text-primary/90 italic">
+                       &quot;{useCase.problem}&quot;
+                     </p>
+                  </div>
+
+                  {/* Agent Actions */}
+                  <div className="space-y-4">
+                    <h3 className="text-h3 text-text-primary mb-2">How the agent handles it:</h3>
+                    <div className="flex flex-col gap-4">
+                      {useCase.agentActions.map((action, i) => (
+                        <div key={i} className="flex gap-4">
+                           <div className="font-mono text-xs font-bold text-accent-primary bg-accent-primary/10 px-2 py-1 rounded h-fit shrink-0 border border-accent-primary/20">
+                             {action.step}
+                           </div>
+                           <p className="text-body text-text-secondary">{action.description}</p>
                         </div>
-                    ))}
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Outcomes */}
+                  <div className="grid grid-cols-3 gap-4 border-t border-border-subtle pt-8">
+                     {useCase.outcomes.map((outcome, i) => {
+                        const numericValue = parseInt(outcome.after.replace(/[^0-9]/g, '')) || 0;
+                        const suffix = outcome.after.replace(/[0-9,.]/g, '') || '';
+                        
+                        return (
+                          <div key={i} className="flex flex-col gap-1">
+                             <span className="text-xs text-text-muted">{outcome.label}</span>
+                             <div className="flex items-baseline gap-2">
+                                <span className="font-mono text-2xl font-bold text-accent-deep">
+                                  {numericValue > 0 ? <AnimatedCounter to={numericValue} suffix={suffix} /> : outcome.after}
+                                </span>
+                             </div>
+                             <span className="text-[10px] uppercase font-semibold tracking-wider text-accent-success bg-accent-success/10 block w-fit px-1.5 py-0.5 rounded border border-accent-success/20 mt-1">
+                               {outcome.metric} vs baseline
+                             </span>
+                          </div>
+                        )
+                     })}
+                  </div>
+
+                  {/* Analytics Accordion */}
+                  <AnalyticsAccordion analytics={useCase.analytics} />
+
+                  <Button asChild className="w-fit mt-4" size="lg">
+                    <Link href="/contact">See this agent in action</Link>
+                  </Button>
+
                 </div>
 
-                <div className="mt-32 mb-20">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-white mb-4">Experience the Console</h2>
-                        <p className="text-text-muted">Explore how human operators govern these agents in real-time.</p>
-                    </div>
-                    <AgentConsole />
+                {/* Visual / Video */}
+                <div className={`w-full ${isEven ? 'lg:col-start-2' : 'lg:col-start-1'}`}>
+                   <VideoPlaceholder 
+                      useCase={useCase.videoPlaceholderType}
+                      label={useCase.videoLabel}
+                      className="shadow-2xl shadow-accent-primary/5"
+                   />
                 </div>
-            </main>
-            <SiteFooter />
-        </div>
-    );
+
+              </div>
+            </div>
+          </section>
+        )
+      })}
+
+      {/* Secondary Workflows */}
+      <MoreWorkflows />
+
+    </div>
+  )
 }

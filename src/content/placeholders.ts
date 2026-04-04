@@ -1,5 +1,5 @@
 export const BRAND = {
-    name: "Azenty K AI",
+    name: "Azentyk.AI",
     oneLiner: "Agentic voice AI that closes the loop across payers, providers, and patients.",
     demoEmailTarget: "demo@azentyk.ai",
 };
