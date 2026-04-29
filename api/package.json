@@ -1,0 +1,12 @@
+{
+  "name": "azentyk-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node -e \"console.log('api ready')\""
+  },
+  "dependencies": {
+    "nodemailer": "^8.0.2",
+    "zod": "^4.3.4"
+  }
+}

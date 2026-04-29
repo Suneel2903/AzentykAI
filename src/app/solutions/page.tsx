@@ -1,134 +1,134 @@
-import { Metadata } from "next"
-import { USE_CASES } from "@/content/use-cases"
-import { Badge } from "@/components/ui/Badge"
-import { AnimatedCounter } from "@/components/ui/AnimatedCounter"
-import { VideoPlaceholder } from "@/components/ui/VideoPlaceholder"
-import { AnalyticsAccordion } from "@/components/ui/AnalyticsAccordion"
-import { Button } from "@/components/ui/Button"
-import { MoreWorkflows } from "@/components/sections/MoreWorkflows"
+import type { Metadata } from "next"
 import Link from "next/link"
+import { ArrowRight } from "lucide-react"
+import { Button } from "@/components/ui/Button"
+import { SectionLabel } from "@/components/ui/SectionLabel"
+import { SOLUTION_PILLARS, type SolutionPillar } from "@/content/solutions"
 
 export const metadata: Metadata = {
-  title: 'Healthcare AI Use Cases — RCM, Prior Auth, Scheduling, Billing',
-  description: 'See how Azentyk AI agents automate the 4 highest-value workflows in US healthcare revenue cycle management.'
+  title: "Solutions - Azentyk.AI",
+  description: "Three paths to production: Discovery & Implementation, Plug-n-Play deployments, or custom Frameworks-based solutioning for healthcare AI automation.",
+}
+
+function StepsVisual({ steps }: { steps: Extract<SolutionPillar, { visualType: "steps" }>["visualData"] }) {
+  return (
+    <div className="rounded-3xl border border-border-subtle bg-bg-secondary/60 p-6">
+      <div className="space-y-4">
+        {steps.map((step, index) => (
+          <div key={step.number} className="relative flex gap-4">
+            {index < steps.length - 1 ? (
+              <div className="absolute left-[19px] top-12 h-[calc(100%-1rem)] w-px bg-border-subtle" />
+            ) : null}
+            <div className="relative z-10 h-10 w-10 rounded-full border border-accent-primary/30 bg-accent-primary/10 flex items-center justify-center text-sm font-mono text-accent-primary shrink-0">
+              {step.number}
+            </div>
+            <div className="rounded-2xl border border-border-subtle bg-bg-primary/50 p-4 flex-1">
+              <h3 className="text-lg font-semibold text-text-primary">{step.name}</h3>
+              <p className="text-sm text-text-secondary mt-2">{step.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function IntegrationsVisual({ data }: { data: Extract<SolutionPillar, { visualType: "integrations" }>["visualData"] }) {
+  return (
+    <div className="rounded-3xl border border-border-subtle bg-bg-secondary/60 p-6 space-y-6">
+      <div>
+        <div className="text-xs font-mono uppercase tracking-[0.2em] text-text-muted mb-3">Certified EHR Integrations</div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {data.ehrs.map((ehr) => (
+            <div key={ehr} className="rounded-2xl border border-border-subtle bg-bg-primary/50 px-4 py-5 text-center text-sm font-semibold text-text-primary">
+              {ehr}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <div className="text-xs font-mono uppercase tracking-[0.2em] text-text-muted mb-3">Deployable Modules</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {data.useCases.map((useCase) => (
+            <div key={useCase} className="rounded-2xl border border-accent-primary/20 bg-accent-primary/5 px-4 py-4 text-sm text-text-primary">
+              {useCase}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ModularVisual({ blocks }: { blocks: string[] }) {
+  return (
+    <div className="rounded-3xl border border-border-subtle bg-bg-secondary/60 p-6">
+      <div className="grid grid-cols-2 gap-4">
+        {blocks.map((block, index) => (
+          <div
+            key={block}
+            className={[
+              "rounded-2xl border px-4 py-6 text-center text-sm font-medium",
+              index % 2 === 0
+                ? "border-accent-violet/30 bg-accent-violet/10 text-text-primary"
+                : "border-accent-primary/30 bg-accent-primary/10 text-text-primary",
+            ].join(" ")}
+          >
+            {block}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 export default function SolutionsPage() {
   return (
-    <div className="bg-bg-primary min-h-screen">
-      
-      {/* Page Hero */}
-      <section className="relative pt-32 pb-24 overflow-hidden border-b border-border-subtle">
-         {/* Animated Scan Line */}
-         <div className="absolute inset-0 z-0 pointer-events-none">
-            <div className="w-full h-[1px] bg-accent-primary/20 absolute top-0 animate-[fade-in-up_4s_linear_infinite]" />
-         </div>
+    <div className="bg-bg-primary min-h-screen pt-32 pb-24">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="max-w-4xl mx-auto text-center mb-20">
+          <SectionLabel className="justify-center flex">HOW WE DELIVER</SectionLabel>
+          <h1 className="text-h1 text-text-primary mb-6">Three paths to production</h1>
+          <p className="text-body-lg text-text-secondary">
+            Whether you need full-stack discovery, ready-to-deploy automation, or custom frameworks for unique workflows — we meet you where you are.
+          </p>
+        </section>
 
-         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center max-w-4xl pt-12">
-            <h1 className="text-h1 text-text-primary mb-6">
-              Every call your team makes manually is a workflow Azentyk can own.
-            </h1>
-            <p className="text-body-lg text-text-secondary">
-              Five core use cases — plus six more. Each one deployed in 48 hours. All of them generating measurable ROI in week one.
-            </p>
-         </div>
-      </section>
+        <section className="space-y-20">
+          {SOLUTION_PILLARS.map((pillar, index) => {
+            const reverse = index % 2 === 1
 
-      {/* Use Case Deep Dives */}
-      {USE_CASES.map((useCase, index) => {
-        const isEven = index % 2 === 0
-        
-        return (
-          <section key={useCase.id} className="relative py-32 border-b border-border-subtle overflow-hidden">
-            
-            {/* Giant Number Background */}
-            <div className="absolute top-10 right-10 text-[180px] font-display font-bold text-text-primary opacity-[0.04] leading-none pointer-events-none">
-              {useCase.number}
-            </div>
-
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-              <div className={`grid grid-cols-1 lg:grid-cols-2 gap-16 items-center ${isEven ? '' : 'lg:grid-flow-col-dense'}`}>
-                
-                {/* Text Content */}
-                <div className={`flex flex-col gap-8 ${isEven ? 'lg:col-start-1' : 'lg:col-start-2'}`}>
-                  
-                  <div>
-                    <Badge variant="cyan" className="font-mono mb-6">{useCase.badge}</Badge>
-                    <h2 className="text-h2 text-text-primary">{useCase.name}</h2>
-                  </div>
-
-                  {/* Problem Block */}
-                  <div className="card-dark border-accent-danger/20 bg-accent-danger/5 p-6 relative overflow-hidden group">
-                     <div className="absolute top-0 left-0 w-1 h-full bg-accent-danger/60" />
-                     <p className="text-body text-text-primary/90 italic">
-                       &quot;{useCase.problem}&quot;
-                     </p>
-                  </div>
-
-                  {/* Agent Actions */}
-                  <div className="space-y-4">
-                    <h3 className="text-h3 text-text-primary mb-2">How the agent handles it:</h3>
-                    <div className="flex flex-col gap-4">
-                      {useCase.agentActions.map((action, i) => (
-                        <div key={i} className="flex gap-4">
-                           <div className="font-mono text-xs font-bold text-accent-primary bg-accent-primary/10 px-2 py-1 rounded h-fit shrink-0 border border-accent-primary/20">
-                             {action.step}
-                           </div>
-                           <p className="text-body text-text-secondary">{action.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Outcomes */}
-                  <div className="grid grid-cols-3 gap-4 border-t border-border-subtle pt-8">
-                     {useCase.outcomes.map((outcome, i) => {
-                        const numericValue = parseInt(outcome.after.replace(/[^0-9]/g, '')) || 0;
-                        const suffix = outcome.after.replace(/[0-9,.]/g, '') || '';
-                        
-                        return (
-                          <div key={i} className="flex flex-col gap-1">
-                             <span className="text-xs text-text-muted">{outcome.label}</span>
-                             <div className="flex items-baseline gap-2">
-                                <span className="font-mono text-2xl font-bold text-accent-deep">
-                                  {numericValue > 0 ? <AnimatedCounter to={numericValue} suffix={suffix} /> : outcome.after}
-                                </span>
-                             </div>
-                             <span className="text-[10px] uppercase font-semibold tracking-wider text-accent-success bg-accent-success/10 block w-fit px-1.5 py-0.5 rounded border border-accent-success/20 mt-1">
-                               {outcome.metric} vs baseline
-                             </span>
-                          </div>
-                        )
-                     })}
-                  </div>
-
-                  {/* Analytics Accordion */}
-                  <AnalyticsAccordion analytics={useCase.analytics} />
-
-                  <Button asChild className="w-fit mt-4" size="lg">
-                    <Link href="/contact">See this agent in action</Link>
-                  </Button>
-
+            return (
+              <div key={pillar.id} className={`grid grid-cols-1 lg:grid-cols-2 gap-10 items-center ${reverse ? "lg:grid-flow-col-dense" : ""}`}>
+                <div className={reverse ? "lg:col-start-2" : ""}>
+                  <div className="text-sm font-mono uppercase tracking-[0.35em] text-accent-primary mb-4">{pillar.number}</div>
+                  <h2 className="text-h2 text-text-primary mb-4">{pillar.name}</h2>
+                  <p className="text-xl text-text-primary/90 mb-4">{pillar.tagline}</p>
+                  <p className="text-body text-text-secondary leading-7">{pillar.description}</p>
                 </div>
 
-                {/* Visual / Video */}
-                <div className={`w-full ${isEven ? 'lg:col-start-2' : 'lg:col-start-1'}`}>
-                   <VideoPlaceholder 
-                      useCase={useCase.videoPlaceholderType}
-                      label={useCase.videoLabel}
-                      className="shadow-2xl shadow-accent-primary/5"
-                   />
+                <div className={reverse ? "lg:col-start-1" : ""}>
+                  {pillar.visualType === "steps" ? <StepsVisual steps={pillar.visualData} /> : null}
+                  {pillar.visualType === "integrations" ? <IntegrationsVisual data={pillar.visualData} /> : null}
+                  {pillar.visualType === "modular" ? <ModularVisual blocks={pillar.visualData.blocks} /> : null}
                 </div>
-
               </div>
-            </div>
-          </section>
-        )
-      })}
+            )
+          })}
+        </section>
 
-      {/* Secondary Workflows */}
-      <MoreWorkflows />
-
+        <section className="mt-20 max-w-4xl mx-auto rounded-3xl border border-accent-primary/20 bg-gradient-to-br from-accent-primary/10 to-accent-violet/10 p-10 text-center">
+          <h2 className="text-h2 text-text-primary mb-4">Not sure which path fits?</h2>
+          <p className="text-body text-text-secondary mb-8">
+            Most engagements blend all three — discovery to scope the work, plug-n-play for the obvious wins, frameworks for the edge cases. Talk to us and we&apos;ll map the right approach for your team.
+          </p>
+          <Button asChild size="lg" className="h-12 px-8 text-base">
+            <Link href="/contact">
+              Talk to Sales <ArrowRight className="w-4 h-4" />
+            </Link>
+          </Button>
+        </section>
+      </div>
     </div>
   )
 }

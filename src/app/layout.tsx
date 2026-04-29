@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { PageWrapper } from "@/components/layout/PageWrapper";
+import { RecaptchaProvider } from "@/components/recaptcha-provider";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 
@@ -46,14 +47,16 @@ export default function RootLayout({
         })}} />
       </head>
       <body className="antialiased min-h-screen flex flex-col relative selection:bg-accent-primary/30 selection:text-white">
-          <div className="noise" />
-          <PageWrapper>
-             <SiteNav />
-             <div className="flex-1 flex flex-col pt-20">
-               {children}
-             </div>
-             <SiteFooter />
-          </PageWrapper>
+          <RecaptchaProvider>
+            <div className="noise" />
+            <PageWrapper>
+               <SiteNav />
+               <div className="flex-1 flex flex-col pt-20">
+                 {children}
+               </div>
+               <SiteFooter />
+            </PageWrapper>
+          </RecaptchaProvider>
       </body>
     </html>
   );

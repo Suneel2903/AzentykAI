@@ -47,7 +47,7 @@ export default function AgentConsole() {
     }, [activeWorkflowId]);
 
     return (
-        <div className="w-full max-w-[95%] mx-auto rounded-2xl bg-bg-900 border border-white/10 shadow-soft overflow-hidden flex flex-col md:flex-row h-[800px]">
+        <div className="w-full max-w-[95%] mx-auto rounded-2xl bg-bg-900 border border-white/10 shadow-soft overflow-hidden flex flex-col md:flex-row min-h-[600px] md:h-[800px]">
 
             {/* Sidebar: Workflows */}
             <div className="md:w-64 bg-panel-900 border-r border-white/5 flex flex-col relative z-20">

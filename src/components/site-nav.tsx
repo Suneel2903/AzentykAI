@@ -15,6 +15,7 @@ const NAV_LINKS = [
   { href: "/platform", label: "Platform" },
   { href: "/security", label: "Security" },
   { href: "/use-cases", label: "Use Cases" },
+  { href: "/pricing", label: "Pricing" },
 ]
 
 export function SiteNav() {

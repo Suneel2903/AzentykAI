@@ -41,6 +41,7 @@ export function SiteFooter() {
             <Link href="/platform" className="text-text-secondary hover:text-text-primary transition-colors">Platform</Link>
             <Link href="/security" className="text-text-secondary hover:text-text-primary transition-colors">Security</Link>
             <Link href="/use-cases" className="text-text-secondary hover:text-text-primary transition-colors">Use Cases</Link>
+            <Link href="/pricing" className="text-text-secondary hover:text-text-primary transition-colors">Pricing</Link>
           </div>
 
           {/* Column 3 - Company */}
