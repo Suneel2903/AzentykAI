@@ -36,4 +36,3 @@ jobs:
           app_location: /
           api_location: api
           output_location: out
-          skip_app_build: true
