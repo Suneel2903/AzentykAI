@@ -37,7 +37,7 @@ export function SiteFooter() {
           {/* Column 2 - Product */}
           <div className="flex flex-col gap-4">
             <h4 className="font-mono text-sm tracking-wider uppercase text-text-primary mb-2">Product</h4>
-            <Link href="/solutions" className="text-text-secondary hover:text-text-primary transition-colors">Solutions</Link>
+            <Link href="/solutions" className="text-text-secondary hover:text-text-primary transition-colors">Solutions Framework</Link>
             <Link href="/platform" className="text-text-secondary hover:text-text-primary transition-colors">Platform</Link>
             <Link href="/security" className="text-text-secondary hover:text-text-primary transition-colors">Security</Link>
             <Link href="/use-cases" className="text-text-secondary hover:text-text-primary transition-colors">Use Cases</Link>

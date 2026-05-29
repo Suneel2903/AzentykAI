@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { RecaptchaProvider } from "@/components/recaptcha-provider";
+import { GoogleAnalytics } from "@/components/google-analytics";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
+import { PUBLIC_GA_MEASUREMENT_ID } from "@/lib/public-config";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://azentyk.ai'),
@@ -47,6 +49,7 @@ export default function RootLayout({
         })}} />
       </head>
       <body className="antialiased min-h-screen flex flex-col relative selection:bg-accent-primary/30 selection:text-white">
+          <GoogleAnalytics measurementId={PUBLIC_GA_MEASUREMENT_ID} />
           <RecaptchaProvider>
             <div className="noise" />
             <PageWrapper>

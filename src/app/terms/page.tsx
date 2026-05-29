@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { PUBLIC_CONTACT_EMAIL } from "@/lib/public-config"
 
 export const metadata: Metadata = {
   title: "Terms of Service",
@@ -100,7 +101,7 @@ export default function TermsPage() {
           </Section>
 
           <Section title="15. Contact Information">
-            <p>Questions about these Terms of Service may be directed to <a href="mailto:contact@azentyk.ai" className="text-accent-primary hover:underline">contact@azentyk.ai</a> or <a href="mailto:legal@azentyk.ai" className="text-accent-primary hover:underline">legal@azentyk.ai</a>.</p>
+            <p>Questions about these Terms of Service may be directed to <a href={`mailto:${PUBLIC_CONTACT_EMAIL}`} className="text-accent-primary hover:underline">{PUBLIC_CONTACT_EMAIL}</a> or <a href="mailto:legal@azentyk.ai" className="text-accent-primary hover:underline">legal@azentyk.ai</a>.</p>
           </Section>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { PUBLIC_CONTACT_EMAIL } from "@/lib/public-config"
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -86,7 +87,7 @@ export default function PrivacyPage() {
           </Section>
 
           <Section title="12. Contact for Privacy Inquiries">
-            <p>Questions about this Privacy Policy or privacy practices may be sent to <a href="mailto:privacy@azentyk.ai" className="text-accent-primary hover:underline">privacy@azentyk.ai</a>. If that inbox is not yet monitored for a given matter, you may also contact <a href="mailto:contact@azentyk.ai" className="text-accent-primary hover:underline">contact@azentyk.ai</a>.</p>
+            <p>Questions about this Privacy Policy or privacy practices may be sent to <a href="mailto:privacy@azentyk.ai" className="text-accent-primary hover:underline">privacy@azentyk.ai</a>. If that inbox is not yet monitored for a given matter, you may also contact <a href={`mailto:${PUBLIC_CONTACT_EMAIL}`} className="text-accent-primary hover:underline">{PUBLIC_CONTACT_EMAIL}</a>.</p>
           </Section>
         </div>
       </div>

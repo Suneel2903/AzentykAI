@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Clock, Video, Calendar, Check, Sparkles } from "lucide-react"
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3"
 import { cn } from "@/lib/utils"
+import { PUBLIC_CONTACT_EMAIL } from "@/lib/public-config"
 
 const TIME_SLOTS = ["9:00 AM", "10:30 AM", "12:00 PM", "2:00 PM", "3:30 PM", "5:00 PM"]
 const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
@@ -38,6 +39,24 @@ function getTimezoneLabel(zone: string): string {
   }
 }
 
+async function getRecaptchaTokenSafely(
+  executeRecaptcha: undefined | ((action: string) => Promise<string>),
+  action: string
+) {
+  if (!executeRecaptcha) {
+    return ""
+  }
+
+  try {
+    return await executeRecaptcha(action)
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("[Azentyk] reCAPTCHA unavailable in current environment, continuing without token", error)
+    }
+    return ""
+  }
+}
+
 interface DemoBookingWidgetProps {
   onSlotSelected?: (slot: string, timezone: string) => void
   embedded?: boolean
@@ -50,7 +69,7 @@ export function DemoBookingWidget({ onSlotSelected, embedded = false }: DemoBook
   const [name, setName] = React.useState("")
   const [email, setEmail] = React.useState("")
   const [organization, setOrganization] = React.useState("")
-  const [honeypot, setHoneypot] = React.useState("")
+  const [faxNumber, setFaxNumber] = React.useState("")
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [isBooked, setIsBooked] = React.useState(false)
   const [submitError, setSubmitError] = React.useState("")
@@ -100,9 +119,7 @@ export function DemoBookingWidget({ onSlotSelected, embedded = false }: DemoBook
     setSubmitError("")
 
     try {
-      const recaptchaToken = executeRecaptcha
-        ? await executeRecaptcha("demo_booking")
-        : ""
+      const recaptchaToken = await getRecaptchaTokenSafely(executeRecaptcha, "demo_booking")
 
       const response = await fetch("/api/book-demo", {
         method: "POST",
@@ -115,7 +132,7 @@ export function DemoBookingWidget({ onSlotSelected, embedded = false }: DemoBook
           time: selectedTime,
           timezone,
           recaptchaToken,
-          website: honeypot,
+          faxNumber,
         }),
       })
 
@@ -125,7 +142,7 @@ export function DemoBookingWidget({ onSlotSelected, embedded = false }: DemoBook
 
       setIsBooked(true)
     } catch {
-      setSubmitError("Couldn't confirm your booking. Please try again or email contact@azentyk.ai.")
+      setSubmitError(`Couldn't confirm your booking. Please try again or email ${PUBLIC_CONTACT_EMAIL}.`)
     } finally {
       setIsSubmitting(false)
     }
@@ -345,7 +362,7 @@ export function DemoBookingWidget({ onSlotSelected, embedded = false }: DemoBook
                   />
                   <input
                     type="email"
-                    placeholder="Work Email"
+                    placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="bg-bg-primary/60 border border-border-subtle rounded-lg px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary/30 transition-all"
@@ -362,12 +379,12 @@ export function DemoBookingWidget({ onSlotSelected, embedded = false }: DemoBook
                 <input
                   type="text"
                   tabIndex={-1}
-                  autoComplete="off"
+                  autoComplete="new-password"
                   aria-hidden="true"
-                  value={honeypot}
-                  onChange={(e) => setHoneypot(e.target.value)}
+                  value={faxNumber}
+                  onChange={(e) => setFaxNumber(e.target.value)}
                   className="absolute left-[-9999px] top-[-9999px] w-px h-px opacity-0"
-                  name="website"
+                  name="fax_number"
                 />
 
                 {submitError && (

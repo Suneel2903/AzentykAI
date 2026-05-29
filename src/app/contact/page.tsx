@@ -8,13 +8,11 @@ import { useGoogleReCaptcha } from "react-google-recaptcha-v3"
 import { AnimatedGrid } from "@/components/sections/AnimatedGrid"
 import { DemoBookingWidget } from "@/components/sections/DemoBookingWidget"
 import { Button } from "@/components/ui/Button"
+import { PUBLIC_CONTACT_EMAIL } from "@/lib/public-config"
 
 const contactFormSchema = z.object({
   fullName: z.string().min(2, { message: "Name is required" }),
-  email: z.string().email({ message: "Invalid email" }).refine((value) => {
-    const domain = value.split("@")[1]
-    return !["gmail.com", "yahoo.com", "hotmail.com"].includes(domain)
-  }, { message: "Please use your work email" }),
+  email: z.string().email({ message: "Invalid email" }),
   company: z.string().min(2, { message: "Company name is required" }),
   role: z.enum(["Revenue Cycle Director", "CFO", "Practice Manager", "CTO", "Other"]),
   visits: z.enum(["<1,000", "1,000-5,000", "5,000-20,000", "20,000+"]),
@@ -29,13 +27,31 @@ const INPUT_CLS =
 
 const SELECT_CLS = `${INPUT_CLS} appearance-none cursor-pointer`
 
+async function getRecaptchaTokenSafely(
+  executeRecaptcha: undefined | ((action: string) => Promise<string>),
+  action: string
+) {
+  if (!executeRecaptcha) {
+    return ""
+  }
+
+  try {
+    return await executeRecaptcha(action)
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("[Azentyk] reCAPTCHA unavailable in current environment, continuing without token", error)
+    }
+    return ""
+  }
+}
+
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [isSuccess, setIsSuccess] = React.useState(false)
   const [errorMsg, setErrorMsg] = React.useState("")
   const [preferredSlot, setPreferredSlot] = React.useState("")
   const [preferredTimezone, setPreferredTimezone] = React.useState("UTC")
-  const [website, setWebsite] = React.useState("")
+  const [faxNumber, setFaxNumber] = React.useState("")
   const { executeRecaptcha } = useGoogleReCaptcha()
 
   const form = useForm<ContactFormValues>({
@@ -56,9 +72,7 @@ export default function ContactPage() {
     setErrorMsg("")
 
     try {
-      const recaptchaToken = executeRecaptcha
-        ? await executeRecaptcha("contact_form")
-        : ""
+      const recaptchaToken = await getRecaptchaTokenSafely(executeRecaptcha, "contact_form")
 
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -67,18 +81,28 @@ export default function ContactPage() {
           ...data,
           preferredSlot: preferredSlot || undefined,
           timezone: preferredTimezone || undefined,
-          website,
+          faxNumber,
           recaptchaToken,
         }),
       })
 
       if (!response.ok) {
-        throw new Error("submit_failed")
+        const responseText = await response.text()
+        if (process.env.NODE_ENV !== "production") {
+          console.error("[Azentyk] Contact submit failed", {
+            status: response.status,
+            body: responseText,
+          })
+        }
+        throw new Error(`submit_failed:${response.status}:${responseText}`)
       }
 
       setIsSuccess(true)
-    } catch {
-      setErrorMsg("There was an error submitting your request. Please try again or email us directly.")
+    } catch (error) {
+      if (process.env.NODE_ENV !== "production") {
+        console.error("[Azentyk] Contact submit error", error)
+      }
+      setErrorMsg(`There was an error submitting your request. Please try again or email us directly at ${PUBLIC_CONTACT_EMAIL}.`)
     } finally {
       setIsSubmitting(false)
     }
@@ -131,17 +155,17 @@ export default function ContactPage() {
                   <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
                     <div className="mb-1">
                       <h2 className="text-xl font-semibold text-text-primary">Request a Demo</h2>
-                      <p className="text-xs text-text-muted mt-1">Work emails only. No spam, ever.</p>
+                      <p className="text-xs text-text-muted mt-1">Use any email you prefer. No spam, ever.</p>
                     </div>
 
                     <input
                       type="text"
                       tabIndex={-1}
-                      autoComplete="off"
+                      autoComplete="new-password"
                       aria-hidden="true"
-                      name="website"
-                      value={website}
-                      onChange={(event) => setWebsite(event.target.value)}
+                      name="fax_number"
+                      value={faxNumber}
+                      onChange={(event) => setFaxNumber(event.target.value)}
                       className="absolute left-[-9999px] top-[-9999px] w-px h-px opacity-0"
                     />
 
@@ -152,8 +176,8 @@ export default function ContactPage() {
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-medium text-text-secondary uppercase tracking-wide">Work Email *</label>
-                      <input type="email" {...form.register("email")} placeholder="you@hospital.com" className={INPUT_CLS} />
+                      <label className="text-xs font-medium text-text-secondary uppercase tracking-wide">Email *</label>
+                      <input type="email" {...form.register("email")} placeholder="you@example.com" className={INPUT_CLS} />
                       {form.formState.errors.email && <span className="text-xs text-accent-danger">{form.formState.errors.email.message}</span>}
                     </div>
 
@@ -254,8 +278,8 @@ export default function ContactPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="card-dark p-5 rounded-2xl flex flex-col gap-2">
                 <div className="text-xs font-mono text-text-muted uppercase tracking-widest">Email</div>
-                <a href="mailto:contact@azentyk.ai" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">
-                  contact@azentyk.ai
+                <a href={`mailto:${PUBLIC_CONTACT_EMAIL}`} className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">
+                  {PUBLIC_CONTACT_EMAIL}
                 </a>
               </div>
               <div className="card-dark p-5 rounded-2xl flex flex-col gap-2">

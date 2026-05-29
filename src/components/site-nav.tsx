@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/Button"
 import { ThemeToggle } from "@/components/ThemeToggle"
 
 const NAV_LINKS = [
-  { href: "/solutions", label: "Solutions" },
+  { href: "/solutions", label: "Solutions Framework" },
   { href: "/platform", label: "Platform" },
   { href: "/security", label: "Security" },
   { href: "/use-cases", label: "Use Cases" },

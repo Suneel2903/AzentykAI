@@ -1,4 +1,9 @@
 async function verifyRecaptcha(token, expectedAction) {
+  if (process.env.NODE_ENV !== "production") {
+    console.warn("[Azentyk] Development mode - skipping reCAPTCHA verification")
+    return { valid: true, score: 1 }
+  }
+
   if (!process.env.RECAPTCHA_SECRET_KEY) {
     console.warn("[Azentyk] RECAPTCHA_SECRET_KEY not set - skipping verification")
     return { valid: true, score: 1 }

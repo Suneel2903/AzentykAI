@@ -5,7 +5,9 @@ Azure Static Web Apps production deploy requires these application settings.
 Frontend build-time values:
 
 - `NEXT_PUBLIC_SITE_URL=https://www.azentyk.ai`
+- `NEXT_PUBLIC_CONTACT_EMAIL=<public contact mailbox>`
 - `NEXT_PUBLIC_RECAPTCHA_SITE_KEY=<Google reCAPTCHA v3 site key>`
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID=<Google Analytics GA4 measurement ID>`
 
 Server-side values for Azure Functions:
 

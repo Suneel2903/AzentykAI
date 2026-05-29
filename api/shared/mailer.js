@@ -29,12 +29,28 @@ async function sendMail(options) {
     return { success: true, simulated: true }
   }
 
-  await transporter.sendMail({
+  const info = await transporter.sendMail({
     from: `"Azentyk.AI Website" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
     ...options,
   })
 
-  return { success: true, simulated: false }
+  console.log("[Azentyk] SMTP send accepted:", {
+    accepted: info.accepted,
+    rejected: info.rejected,
+    response: info.response,
+    envelope: info.envelope,
+    messageId: info.messageId,
+  })
+
+  return {
+    success: true,
+    simulated: false,
+    accepted: info.accepted,
+    rejected: info.rejected,
+    response: info.response,
+    envelope: info.envelope,
+    messageId: info.messageId,
+  }
 }
 
 module.exports = { getTransporter, sendMail }

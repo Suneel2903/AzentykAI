@@ -1,7 +1,11 @@
 const { z } = require("zod")
 const { verifyRecaptcha } = require("../shared/recaptcha")
 const { sendMail } = require("../shared/mailer")
-const { buildContactEmailHtml } = require("../shared/email-templates")
+const {
+  buildContactAlertEmailHtml,
+  buildContactAckEmailHtml,
+} = require("../shared/email-templates")
+const { appendAuditLog } = require("../shared/audit-log")
 
 const contactSchema = z.object({
   fullName: z.string().min(2),
@@ -13,9 +17,20 @@ const contactSchema = z.object({
   message: z.string().optional(),
   preferredSlot: z.string().optional(),
   timezone: z.string().optional(),
+  faxNumber: z.string().optional(),
   website: z.string().optional(),
   recaptchaToken: z.string().optional(),
 })
+
+function getNotificationRecipients() {
+  return (
+    process.env.CONTACT_NOTIFICATION_EMAIL ||
+    process.env.NEXT_PUBLIC_CONTACT_EMAIL ||
+    process.env.CONTACT_EMAIL ||
+    process.env.SMTP_USER ||
+    "contact@azentyk.ai"
+  )
+}
 
 module.exports = async function (context, req) {
   const headers = {
@@ -31,9 +46,17 @@ module.exports = async function (context, req) {
   }
 
   try {
+    appendAuditLog("contact_request_received", {
+      method: req.method,
+      bodyKeys: Object.keys(req.body || {}),
+    })
+
     const parsed = contactSchema.safeParse(req.body)
 
     if (!parsed.success) {
+      appendAuditLog("contact_validation_failed", {
+        issues: parsed.error.issues,
+      })
       context.res = {
         status: 422,
         headers,
@@ -44,15 +67,28 @@ module.exports = async function (context, req) {
 
     const data = parsed.data
 
-    if (data.website && data.website.length > 0) {
-      context.res = { status: 200, headers, body: JSON.stringify({ success: true }) }
-      return
+    const honeypotValue = (data.faxNumber || data.website || "").trim()
+    if (honeypotValue.length > 0) {
+      appendAuditLog("contact_honeypot_triggered", {
+        email: data.email,
+        honeypotValue,
+        ignoredInDev: process.env.NODE_ENV !== "production",
+      })
+      if (process.env.NODE_ENV === "production") {
+        context.res = { status: 200, headers, body: JSON.stringify({ success: true }) }
+        return
+      }
     }
 
     const recaptcha = await verifyRecaptcha(data.recaptchaToken || "", "contact_form")
     context.log("[Azentyk] reCAPTCHA score (contact):", recaptcha.score)
 
     if (!recaptcha.valid) {
+      appendAuditLog("contact_recaptcha_rejected", {
+        score: recaptcha.score,
+        reason: recaptcha.reason,
+        email: data.email,
+      })
       context.res = {
         status: 400,
         headers,
@@ -61,16 +97,53 @@ module.exports = async function (context, req) {
       return
     }
 
-    await sendMail({
-      to: process.env.NEXT_PUBLIC_CONTACT_EMAIL || process.env.CONTACT_EMAIL || "contact@azentyk.ai",
+    const recipients = getNotificationRecipients()
+    const internalSubject = `Demo Request - ${data.fullName} at ${data.company}${data.preferredSlot ? ` · ${data.preferredSlot}` : ""}`
+    const internalMailResult = await sendMail({
+      to: recipients,
       replyTo: data.email,
-      subject: `Demo Request - ${data.fullName} at ${data.company}${data.preferredSlot ? ` · ${data.preferredSlot}` : ""}`,
-      html: buildContactEmailHtml(data),
+      subject: internalSubject,
+      html: buildContactAlertEmailHtml(data),
     })
+
+    context.log("[Azentyk] Contact lead notification result:", internalMailResult)
+    appendAuditLog("contact_mail_sent", {
+      recipients,
+      replyTo: data.email,
+      subject: internalSubject,
+      mailResult: internalMailResult,
+    })
+
+    try {
+      const firstName = String(data.fullName || "").split(" ")[0] || "there"
+      const ackSubject = `We received your Azentyk request, ${firstName}`
+      const ackMailResult = await sendMail({
+        to: data.email,
+        subject: ackSubject,
+        html: buildContactAckEmailHtml(data),
+      })
+
+      context.log("[Azentyk] Contact acknowledgement result:", ackMailResult)
+      appendAuditLog("contact_ack_sent", {
+        recipient: data.email,
+        subject: ackSubject,
+        mailResult: ackMailResult,
+      })
+    } catch (ackError) {
+      context.log("[Azentyk] Contact acknowledgement failed:", ackError)
+      appendAuditLog("contact_ack_failed", {
+        recipient: data.email,
+        message: ackError && ackError.message ? ackError.message : String(ackError),
+      })
+    }
 
     context.res = { status: 200, headers, body: JSON.stringify({ success: true }) }
   } catch (error) {
     context.log("[Azentyk] Contact form error:", error)
+    appendAuditLog("contact_error", {
+      message: error && error.message ? error.message : String(error),
+      stack: error && error.stack ? error.stack : undefined,
+    })
     context.res = {
       status: 500,
       headers,
