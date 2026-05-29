@@ -26,10 +26,6 @@ export default function PrivacyPage() {
           <p className="text-sm uppercase tracking-[0.2em] text-text-muted">Last updated: {LAST_UPDATED}</p>
         </div>
 
-        <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-5 py-4 text-sm text-text-secondary mb-10">
-          This document is provided as a template and is subject to legal review. For questions, contact legal@azentyk.ai.
-        </div>
-
         <div className="space-y-10">
           <Section title="1. Introduction">
             <p>Azentyk values the trust of our customers, prospects, and website visitors. This Privacy Policy explains how we collect, use, disclose, and safeguard information when you interact with our website, platform, integrations, APIs, and related services.</p>

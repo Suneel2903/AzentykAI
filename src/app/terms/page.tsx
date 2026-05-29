@@ -26,10 +26,6 @@ export default function TermsPage() {
           <p className="text-sm uppercase tracking-[0.2em] text-text-muted">Last updated: {LAST_UPDATED}</p>
         </div>
 
-        <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-5 py-4 text-sm text-text-secondary mb-10">
-          This document is provided as a template and is subject to legal review. For questions, contact legal@azentyk.ai.
-        </div>
-
         <div className="space-y-10">
           <Section title="1. Acceptance of Terms">
             <p>These Terms of Service govern your access to and use of the Azentyk platform, website, APIs, integrations, and related services. By accessing or using the service, you agree to be bound by these terms.</p>
@@ -101,7 +97,7 @@ export default function TermsPage() {
           </Section>
 
           <Section title="15. Contact Information">
-            <p>Questions about these Terms of Service may be directed to <a href={`mailto:${PUBLIC_CONTACT_EMAIL}`} className="text-accent-primary hover:underline">{PUBLIC_CONTACT_EMAIL}</a> or <a href="mailto:legal@azentyk.ai" className="text-accent-primary hover:underline">legal@azentyk.ai</a>.</p>
+            <p>Questions about these Terms of Service may be directed to <a href={`mailto:${PUBLIC_CONTACT_EMAIL}`} className="text-accent-primary hover:underline">{PUBLIC_CONTACT_EMAIL}</a>.</p>
           </Section>
         </div>
       </div>
